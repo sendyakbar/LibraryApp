@@ -1,7 +1,10 @@
 import React, {FC} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {ImageProps} from 'react-native';
 
 import BookListScreen from '../screens/BookListScreen';
+import {icon} from '../themes/icons';
+import TabBarIcon from '../components/TabBarIcon';
 
 export type MainBottomTabParamList = {
   Technology: {name: string};
@@ -10,18 +13,40 @@ export type MainBottomTabParamList = {
   Science: {name: string};
 };
 
-const Tab = createBottomTabNavigator<MainBottomTabParamList>();
-
 type Subjects = {
   id: number;
   name: string;
+  iconActive: ImageProps;
+  iconInactive: ImageProps;
 };
 
+const Tab = createBottomTabNavigator<MainBottomTabParamList>();
+
 const subjects = [
-  {id: 1, name: 'Technology'},
-  {id: 2, name: 'Economics'},
-  {id: 3, name: 'Fictions'},
-  {id: 4, name: 'Science'},
+  {
+    id: 1,
+    name: 'Technology',
+    iconActive: icon.technology,
+    iconInactive: icon.technologyInactive,
+  },
+  {
+    id: 2,
+    name: 'Economics',
+    iconActive: icon.economics,
+    iconInactive: icon.economicsInactive,
+  },
+  {
+    id: 3,
+    name: 'Fictions',
+    iconActive: icon.fictions,
+    iconInactive: icon.fictionsInactive,
+  },
+  {
+    id: 4,
+    name: 'Science',
+    iconActive: icon.science,
+    iconInactive: icon.scienceInactive,
+  },
 ];
 
 const MainBottomTabNavigator: FC = () => {
@@ -36,6 +61,17 @@ const MainBottomTabNavigator: FC = () => {
           options={{
             title: d.name,
             headerShown: false,
+            tabBarIcon: ({focused}) =>
+              TabBarIcon({
+                focused,
+                source: {
+                  iconActive: d.iconActive,
+                  iconInactive: d.iconInactive,
+                },
+              }),
+            tabBarLabelStyle: {
+              fontSize: 11,
+            },
           }}
           initialParams={{
             name: d.name,

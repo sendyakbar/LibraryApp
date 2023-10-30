@@ -7,20 +7,27 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
+import {CompositeScreenProps} from '@react-navigation/native';
 
 import {MainBottomTabParamList} from '../navigation/MainBottomTabNavigator';
 import {getBooksByGenre, Work} from '../service';
 import {color} from '../themes/colors';
 import BookCard from '../groups/BookCard';
 import {UseFetch} from '../hooks/useFetch';
+import {RootNavigatorParamList} from '../navigation/RootNavigator';
 
-type Props = NativeStackScreenProps<
-  MainBottomTabParamList,
-  'Economics' | 'Fictions' | 'Science' | 'Technology'
+type Props = CompositeScreenProps<
+  BottomTabScreenProps<
+    MainBottomTabParamList,
+    'Economics' | 'Fictions' | 'Science' | 'Technology'
+  >,
+  NativeStackScreenProps<RootNavigatorParamList>
 >;
 
-const BookListScreen: FC<Props> = ({route}) => {
+const BookListScreen: FC<Props> = ({route, navigation}) => {
   const {name} = route.params;
+  // const navigation = useNavigation();
   const {loading, data} = UseFetch(getBooksByGenre(name.toLowerCase(), 0));
   const [bookList, setBookList] = useState<Work[]>([]);
   const [nextDataLoading, setNextDataLoading] = useState<boolean>(false);
@@ -31,7 +38,9 @@ const BookListScreen: FC<Props> = ({route}) => {
     setBookList(data.works);
   }, [data]);
 
-  const onPressBook = () => () => {};
+  const onPressBook = (book: Work) => () => {
+    navigation.navigate('BookRentFormScreen', {book});
+  };
 
   const onEndReached = async () => {
     try {
@@ -71,7 +80,7 @@ const BookListScreen: FC<Props> = ({route}) => {
           authors,
           editionNumber: item.edition_count,
         }}
-        onPress={onPressBook()}
+        onPress={onPressBook(item)}
       />
     );
   };

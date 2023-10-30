@@ -20,7 +20,7 @@ const RootNavigator: FC = () => {
       <Stack.Screen
         name="MainBottomTabNavigator"
         component={MainBottomTabNavigator}
-        options={{headerShown: false}}
+        options={{headerShown: false, title: ''}}
       />
       <Stack.Screen
         name="BookRentFormScreen"

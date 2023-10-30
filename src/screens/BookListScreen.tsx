@@ -25,6 +25,7 @@ const BookListScreen: FC<Props> = ({route}) => {
   const [bookList, setBookList] = useState<Work[]>([]);
   const [nextDataLoading, setNextDataLoading] = useState<boolean>(false);
   const [nextDataOffset, setNextDataOffset] = useState<number>(0);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   useEffect(() => {
     setBookList(data.works);
@@ -45,6 +46,19 @@ const BookListScreen: FC<Props> = ({route}) => {
       // error
     } finally {
       setNextDataLoading(false);
+    }
+  };
+
+  const onRefresh = async () => {
+    try {
+      setRefreshing(true);
+      const newData = await getBooksByGenre(name.toLocaleLowerCase(), 0);
+      setBookList(newData.works);
+      setNextDataOffset(0);
+    } catch (err) {
+      // error
+    } finally {
+      setRefreshing(false);
     }
   };
 
@@ -94,6 +108,8 @@ const BookListScreen: FC<Props> = ({route}) => {
       onEndReached={onEndReached}
       onEndReachedThreshold={0.3}
       ListFooterComponent={footer}
+      onRefresh={onRefresh}
+      refreshing={refreshing}
     />
   );
 };
